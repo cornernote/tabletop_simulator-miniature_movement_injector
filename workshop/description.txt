@@ -1,0 +1,45 @@
+[h1]Miniature Script Injector[/h1]
+
+Ever wished your miniatures in [b]Tabletop Simulator[/b] could automatically track movement distances?
+This mod adds exactly that - a simple drag-and-drop way to give any minis a measurement tool!
+
+[h2]=== FEATURES ===[/h2]
+
+[list]
+[*] [b]Drag & Drop Injection[/b] - Drop a miniature onto the panel to automatically add the distance-measuring script.
+[*] [b]Automatic Distance Display[/b] - When you move your mini, it shows how far you've moved on the tabletop grid.
+[*] [b]Visual Measurement Token[/b] - A temporary spinning marker appears to show starting position while moving.
+[*] [b]Clean & Lightweight[/b] - The measurement marker automatically deletes itself after a short time.
+[*] [b]Easy Script Removal[/b] - Flip the panel upside down and drop a miniature to remove the script instantly.
+[*] [b]Safe Injection[/b] - Won't overwrite custom scripts unless they're part of this system.
+[*] [b]Supports Miniatures[/b] - Works with objects tagged as Miniature, Figurine, Figure, or Model.
+[/list]
+
+[h2]=== HOW TO USE ===[/h2]
+
+Place the [b]Panel[/b] on your table.
+
+Drop a miniature onto the panel:
+
+[/list]
+[*] [b]Right-side up[/b] → Adds the distance script.
+[*] [b]Upside down[/b] → Removes the script.
+[list]
+
+Pick up and move your miniature - the distance counter will appear automatically!
+
+[h2]=== CREDITS AND THANKS ===[/h2]
+
+[b]Built with passion, assets and inspiration came from the following mods:[/b]
+[list]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2454472719]DnD Tools (Mini Injector/Initiative Tracking/Wall Spawner/Grid Management) by ColColonCleaner[/url]
+[/list]
+
+[b]Thank you[/b] for the amazing tools - without these contributions, this mod wouldn't exist.
+
+
+[h2]=== RESOURCES ===[/h2]
+
+[list]
+[*] [url=https://github.com/cornernote/tabletop_simulator-miniature_movement_injector] Assets and a copy of the savegame on GitHub[/url]
+[/list]
