@@ -1,7 +1,7 @@
 {
   "SaveName": "Custom",
-  "EpochTime": 1756545433,
-  "Date": "8/30/2025 6:47:13 PM",
+  "EpochTime": 1756547262,
+  "Date": "8/30/2025 7:17:42 PM",
   "VersionNumber": "v13.3",
   "GameMode": "DND Measurement Injector",
   "GameType": "Utility",
@@ -611,9 +611,9 @@
         "posX": 3.88245535,
         "posY": 0.963085353,
         "posZ": -11.1911087,
-        "rotX": -6.68818E-07,
+        "rotX": -6.284117E-07,
         "rotY": 90.0082855,
-        "rotZ": 5.42678436E-07,
+        "rotZ": 5.58852037E-07,
         "scaleX": 0.395886034,
         "scaleY": 0.507236242,
         "scaleZ": 0.507236242
@@ -719,12 +719,12 @@
       "GUID": "6c6c45",
       "Name": "Custom_Model",
       "Transform": {
-        "posX": -0.7312236,
-        "posY": 0.960000038,
+        "posX": -0.731223643,
+        "posY": 0.9599999,
         "posZ": -13.6482306,
-        "rotX": 1.55085854E-06,
-        "rotY": -0.00262405048,
-        "rotZ": 2.89332462E-07,
+        "rotX": 1.55383975E-06,
+        "rotY": -0.00262178225,
+        "rotZ": 7.6719607E-07,
         "scaleX": 0.79588753,
         "scaleY": 0.360015184,
         "scaleZ": 0.5374339
@@ -738,9 +738,9 @@
         "z": 0.0
       },
       "ColorDiffuse": {
-        "r": 0.391984731,
-        "g": 0.391984731,
-        "b": 0.391984731
+        "r": 0.391984671,
+        "g": 0.391984671,
+        "b": 0.391984671
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -911,11 +911,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": 2.462573,
-        "posY": 0.9599999,
+        "posY": 0.9599997,
         "posZ": -7.59656668,
-        "rotX": 8.034972E-07,
+        "rotX": -4.75649671E-08,
         "rotY": 134.935638,
-        "rotZ": -8.1779956E-07,
+        "rotZ": 9.53657434E-07,
         "scaleX": 0.7000002,
         "scaleY": 0.3500001,
         "scaleZ": 0.7000002
@@ -1686,12 +1686,12 @@
       "GUID": "d140c0",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": -9.016654,
-        "posY": 0.959999859,
-        "posZ": -7.802049,
-        "rotX": 1.10513076E-06,
-        "rotY": 179.999619,
-        "rotZ": 5.20907E-07,
+        "posX": -9.016093,
+        "posY": 0.9600002,
+        "posZ": -7.80178547,
+        "rotX": 3.829751E-05,
+        "rotY": 179.993851,
+        "rotZ": 5.49515971E-05,
         "scaleX": 1.475715,
         "scaleY": 1.0,
         "scaleZ": 1.475715
@@ -1735,7 +1735,7 @@
           "Stretch": false
         }
       },
-      "LuaScript": "-- This script is designed to be placed on a Panel object in Tabletop Simulator.\r\n-- It detects when an object is dropped directly on the panel.\r\n\r\n-- The unique identifier for the injected script.\r\nlocal SCRIPT_IDENTIFIER = \"--[dnd-measurement-injector]--\"\r\n\r\n-- This is the template for the script that will be injected into miniatures.\r\n-- It is a single, robust multi-line string.\r\nlocal SCRIPT_TO_INJECT_TEMPLATE = [[\r\n]] .. SCRIPT_IDENTIFIER .. [[\r\n\r\nfunction onPickUp(color)\r\n    local gridX = Grid and Grid.sizeX or 2\r\n    local startPos = self.getPosition()\r\n\r\n    for _, hit in ipairs(Physics.cast({\r\n        origin = self.getBoundsNormalized().center - self.getBoundsNormalized().size,\r\n        direction = {0, -1, 0},\r\n        type = 1,\r\n        max_distance = 10\r\n    })) do\r\n        if hit.point and hit.hit_object ~= self then\r\n            startPos = hit.point\r\n            break\r\n        end\r\n    end\r\n\t\r\n\tstartPos[2] = startPos[2] + 0.01\r\n\r\n    local spinner = spawnObject({\r\n        type = \"Custom_Model\",\r\n        position = startPos,\r\n        rotation = {0, 0, 0},\r\n        scale = {gridX / 2.2, 0.1, gridX / 2.2}\r\n    })\r\n\r\n    spinner.setLock(true)\r\n    spinner.setCustomObject({\r\n        type = \"coin\",\r\n        mesh = \"http://pastebin.com/raw/RBUFj0HE\",\r\n        collider = \"http://pastebin.com/raw/bUwzJeWz\"\r\n    })\r\n\tspinner.setColorTint({1, 1, 1})\r\n    spinner.interactable = false\r\n    spinner.lock()\r\n\r\n    spinner.createButton({\r\n        click_function = \"noop\",\r\n        function_owner = self,\r\n        label = \"0\",\r\n        position = {0, 0, 0},\r\n\t\tfont_color = color,\r\n        width = 0,\r\n\t\theight = 0,\r\n        font_size = 400\r\n    })\r\n\r\n\tself.clearButtons()\r\n    self.createButton({\r\n        click_function = \"noop\",\r\n        function_owner = self,\r\n        label = \"0\",\r\n        position = {0, self.getVisualBoundsNormalized().size.z + 1, 0},\r\n\t\tfont_color = {1, 1, 1},\r\n        width = 0,\r\n\t\theight = 0,\r\n        font_size = 400\r\n    })\r\n\r\n    local parentGUID = self.getGUID()\r\n    spinner.setLuaScript([=[\r\n        local time_of_release = nil\r\n        \r\n        function onUpdate()\r\n            local parent = getObjectFromGUID(\"]=] .. parentGUID .. [=[\")\r\n            \r\n            if parent and parent.held_by_color then\r\n\t\t\t    if (not time_of_release) then\r\n\t\t\t\t\tlocal gridX = Grid and Grid.sizeX or 2\r\n\t\t\t\t\tlocal diff = self.getPosition() - parent.getPosition()\r\n\t\t\t\t\tdiff.y = 0\r\n\t\t\t\t\tlocal dist = math.max(math.abs(diff.x), math.abs(diff.z)) * (5.0 / gridX)\r\n\t\t\t\t\tparent.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\r\n\t\t\t\t\tself.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\r\n\t\t\t\t\tself.setRotation({0, self.getRotation().y + 1, 0})\r\n                end\r\n            else\r\n                -- The object is NOT being held.\r\n                if time_of_release == nil then\r\n                    time_of_release = os.clock()\r\n                end\r\n\r\n                -- Check if time has passed since release.\r\n                if os.clock() - time_of_release >= 5 then\r\n                    destroyObject(self)\r\n                end\r\n            end\r\n        end\r\n    ]=])\r\nend\r\n\r\nlocal time_of_release = nil\r\nfunction onUpdate()\r\n\tif self.held_by_color then\r\n\t    time_of_release = nil\r\n    else\r\n\t\tif time_of_release == nil then\r\n\t\t\ttime_of_release = os.clock()\r\n\t\tend\r\n\r\n\t\tif os.clock() - time_of_release >= 5 then\r\n\t\t\tself.clearButtons()\r\n\t\tend\r\n\tend\r\nend\r\n\r\nfunction noop() end\r\n\r\n]]\r\n\r\n--------------------------------------------------------------------------------\r\n\r\n-- onObjectDrop is a global function that triggers when an object is dropped anywhere on the table.\r\n-- The `self` variable here refers to the panel.\r\nfunction onObjectDrop(player_color, dropped_object)\r\n    -- Ignore the event if the panel itself is the object being dropped.\r\n    if self.getGUID() == dropped_object.getGUID() then\r\n        return\r\n    end\r\n\r\n    -- Helper function to calculate the minimum and maximum coordinates of an object's bounding box.\r\n    local function getObjectBounds(obj)\r\n        local bounds = obj.getBounds()\r\n        local min_pos = Vector(bounds.center.x - bounds.size.x / 2,\r\n                               bounds.center.y - bounds.size.y / 2,\r\n                               bounds.center.z - bounds.size.z / 2)\r\n        local max_pos = Vector(bounds.center.x + bounds.size.x / 2,\r\n                               bounds.center.y + bounds.size.y / 2,\r\n                               bounds.center.z + bounds.size.z / 2)\r\n        return min_pos, max_pos\r\n    end\r\n\r\n    -- Define the height of the \"drop zone\" above the panel.\r\n    local drop_zone_height = 5\r\n\r\n    -- Get the bounding box of the panel and the dropped object using our helper function.\r\n    local panel_min_pos, panel_max_pos = getObjectBounds(self)\r\n    local dropped_obj_min_pos, dropped_obj_max_pos = getObjectBounds(dropped_object)\r\n\r\n    -- Extend the panel's max Y boundary to include the drop zone height.\r\n    panel_max_pos.y = panel_max_pos.y + drop_zone_height\r\n\r\n    -- Check for an overlap between the two bounding boxes.\r\n    if (dropped_obj_min_pos.x < panel_max_pos.x and dropped_obj_max_pos.x > panel_min_pos.x) and\r\n       (dropped_obj_min_pos.y < panel_max_pos.y and dropped_obj_max_pos.y > panel_min_pos.y) and\r\n       (dropped_obj_min_pos.z < panel_max_pos.z and dropped_obj_max_pos.z > panel_min_pos.z) then\r\n\r\n        -- Determine if the panel is upside down by checking its rotation.\r\n        local rotation = self.getRotation()\r\n        local panel_orientation = \"right way up\"\r\n        if math.abs(rotation.x) > 170 or math.abs(rotation.z) > 170 then\r\n            panel_orientation = \"upside down\"\r\n        end\r\n\r\n        -- Check if the dropped object has a tag that identifies it as a miniature.\r\n        local valid_tags = {\"Miniature\", \"Figurine\", \"Figure\", \"Model\"}\r\n        local is_miniature = false\r\n        for _, tag in ipairs(valid_tags) do\r\n            if dropped_object.tag == tag then\r\n                is_miniature = true\r\n                break\r\n            end\r\n        end\r\n\r\n        if is_miniature then\r\n            if panel_orientation == \"right way up\" then\r\n                -- This is the \"Inject\" side. Add the script if it's not already there.\r\n                local current_script = dropped_object.getLuaScript()\r\n                \r\n                if current_script == \"\" or not current_script:find(SCRIPT_IDENTIFIER, 0, true) then\r\n                    dropped_object.setLuaScript(SCRIPT_TO_INJECT_TEMPLATE)\r\n                    broadcastToAll(\"Script injected into '\" .. dropped_object.getName() .. \"'!\")\r\n                else\r\n                    broadcastToAll(\"Script already exists on '\" .. dropped_object.getName() .. \"'. No changes made.\")\r\n                end\r\n            elseif panel_orientation == \"upside down\" then\r\n                -- This is the \"Remove\" side. Remove the script if it exists.\r\n                local current_script = dropped_object.getLuaScript()\r\n\r\n                -- Only update the script if it contained the dnd-marker script.\r\n                if current_script:find(SCRIPT_IDENTIFIER, 1, true) then\r\n\t\t\t\t\tdropped_object.script_state = \"\"\r\n\t\t\t\t\tdropped_object.script_code = \"\"\r\n\t\t\t\t\tdropped_object.setLuaScript(\"\")\r\n\t\t\t\t\tdropped_object.reload()\r\n                    broadcastToAll(\"Script removed from '\" .. dropped_object.getName() .. \"'!\")\r\n                else\r\n                    broadcastToAll(\"No script to remove from '\" .. dropped_object.getName() .. \"'.\")\r\n                end\r\n            end\r\n        else\r\n            -- An object that is not a miniature was dropped. Report its type.\r\n            print(\"An object of type '\" .. dropped_object.type .. \"' was dropped on the panel. No action taken.\")\r\n        end\r\n    end\r\nend\r\n",
+      "LuaScript": "-- This script is designed to be placed on a Panel object in Tabletop Simulator.\r\n-- It detects when an object is dropped directly on the panel.\r\n\r\n-- The unique identifier for the injected script.\r\nlocal SCRIPT_IDENTIFIER = \"--[dnd-measurement-injector]--\"\r\n\r\n-- This is the template for the script that will be injected into miniatures.\r\n-- It is a single, robust multi-line string.\r\nlocal SCRIPT_TO_INJECT_TEMPLATE = [[\r\n]] .. SCRIPT_IDENTIFIER .. [[\r\n\r\nfunction onPickUp(color)\r\n    local gridX = Grid and Grid.sizeX or 2\r\n    local startPos = self.getPosition()\r\n\r\n    for _, hit in ipairs(Physics.cast({\r\n        origin = self.getBoundsNormalized().center - self.getBoundsNormalized().size,\r\n        direction = {0, -1, 0},\r\n        type = 1,\r\n        max_distance = 10\r\n    })) do\r\n        if hit.point and hit.hit_object ~= self then\r\n            startPos = hit.point\r\n            break\r\n        end\r\n    end\r\n\t\r\n\tstartPos[2] = startPos[2] + 0.01\r\n\r\n    local spinner = spawnObject({\r\n        type = \"Custom_Model\",\r\n        position = startPos,\r\n        rotation = {0, 0, 0},\r\n        scale = {gridX / 2.2, 0.1, gridX / 2.2}\r\n    })\r\n\r\n    spinner.setLock(true)\r\n    spinner.setCustomObject({\r\n        type = \"coin\",\r\n        mesh = \"http://pastebin.com/raw/RBUFj0HE\",\r\n        collider = \"http://pastebin.com/raw/bUwzJeWz\"\r\n    })\r\n\tspinner.setColorTint({1, 1, 1})\r\n    spinner.interactable = false\r\n    spinner.lock()\r\n\r\n    spinner.createButton({\r\n        click_function = \"noop\",\r\n        function_owner = self,\r\n        label = \"0\",\r\n        position = {0, 0, 0},\r\n\t\tfont_color = color,\r\n        width = 0,\r\n\t\theight = 0,\r\n        font_size = 400\r\n    })\r\n\r\n\tself.clearButtons()\r\n    self.createButton({\r\n        click_function = \"noop\",\r\n        function_owner = self,\r\n        label = \"0\",\r\n        position = {0, self.getVisualBoundsNormalized().size.z + 1, 0},\r\n\t\tfont_color = {1, 1, 1},\r\n        width = 0,\r\n\t\theight = 0,\r\n        font_size = 400\r\n    })\r\n\r\n    local parentGUID = self.getGUID()\r\n    spinner.setLuaScript([=[\r\n        local time_of_release = nil\r\n        \r\n        function onUpdate()\r\n            local parent = getObjectFromGUID(\"]=] .. parentGUID .. [=[\")\r\n            \r\n            if parent and parent.held_by_color then\r\n\t\t\t    if (not time_of_release) then\r\n\t\t\t\t\tlocal gridX = Grid and Grid.sizeX or 2\r\n\t\t\t\t\tlocal diff = self.getPosition() - parent.getPosition()\r\n\t\t\t\t\tdiff.y = 0\r\n\t\t\t\t\tlocal dist = math.max(math.abs(diff.x), math.abs(diff.z)) * (5.0 / gridX)\r\n\t\t\t\t\tparent.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\r\n\t\t\t\t\tself.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\r\n\t\t\t\t\tself.setRotation({0, self.getRotation().y + 1, 0})\r\n                end\r\n            else\r\n                -- The object is NOT being held.\r\n                if time_of_release == nil then\r\n                    time_of_release = os.clock()\r\n                end\r\n\r\n                -- Check if time has passed since release.\r\n                if os.clock() - time_of_release >= 5 then\r\n                    destroyObject(self)\r\n                end\r\n            end\r\n        end\r\n    ]=])\r\nend\r\n\r\nlocal time_of_release = nil\r\nfunction onUpdate()\r\n\tif self.held_by_color then\r\n\t    time_of_release = nil\r\n    else\r\n\t\tif time_of_release == nil then\r\n\t\t\ttime_of_release = os.clock()\r\n\t\tend\r\n\r\n\t\tif os.clock() - time_of_release >= 5 then\r\n\t\t\tself.clearButtons()\r\n\t\tend\r\n\tend\r\nend\r\n\r\nfunction noop() end\r\n\r\n]]\r\n\r\n--------------------------------------------------------------------------------\r\n\r\n-- onObjectDrop is a global function that triggers when an object is dropped anywhere on the table.\r\n-- The `self` variable here refers to the panel.\r\nfunction onObjectDrop(player_color, dropped_object)\r\n    -- Ignore the event if the panel itself is the object being dropped.\r\n    if self.getGUID() == dropped_object.getGUID() then\r\n        return\r\n    end\r\n\r\n    -- Helper function to calculate the minimum and maximum coordinates of an object's bounding box.\r\n    local function getObjectBounds(obj)\r\n        local bounds = obj.getBounds()\r\n        local min_pos = Vector(bounds.center.x - bounds.size.x / 2,\r\n                               bounds.center.y - bounds.size.y / 2,\r\n                               bounds.center.z - bounds.size.z / 2)\r\n        local max_pos = Vector(bounds.center.x + bounds.size.x / 2,\r\n                               bounds.center.y + bounds.size.y / 2,\r\n                               bounds.center.z + bounds.size.z / 2)\r\n        return min_pos, max_pos\r\n    end\r\n\r\n    -- Define the height of the \"drop zone\" above the panel.\r\n    local drop_zone_height = 5\r\n\r\n    -- Get the bounding box of the panel and the dropped object using our helper function.\r\n    local panel_min_pos, panel_max_pos = getObjectBounds(self)\r\n    local dropped_obj_min_pos, dropped_obj_max_pos = getObjectBounds(dropped_object)\r\n\r\n    -- Extend the panel's max Y boundary to include the drop zone height.\r\n    panel_max_pos.y = panel_max_pos.y + drop_zone_height\r\n\r\n    -- Check for an overlap between the two bounding boxes.\r\n    if (dropped_obj_min_pos.x < panel_max_pos.x and dropped_obj_max_pos.x > panel_min_pos.x) and\r\n       (dropped_obj_min_pos.y < panel_max_pos.y and dropped_obj_max_pos.y > panel_min_pos.y) and\r\n       (dropped_obj_min_pos.z < panel_max_pos.z and dropped_obj_max_pos.z > panel_min_pos.z) then\r\n\r\n        -- Determine if the panel is upside down by checking its rotation.\r\n        local rotation = self.getRotation()\r\n        local panel_orientation = \"right way up\"\r\n        if math.abs(rotation.x) > 170 or math.abs(rotation.z) > 170 then\r\n            panel_orientation = \"upside down\"\r\n        end\r\n\r\n        -- Check if the dropped object has a tag that identifies it as a miniature.\r\n        local valid_tags = {\"Miniature\", \"Figurine\", \"Figure\", \"Model\", \"Tile\"}\r\n        local is_miniature = false\r\n        for _, tag in ipairs(valid_tags) do\r\n            if dropped_object.tag == tag then\r\n                is_miniature = true\r\n                break\r\n            end\r\n        end\r\n\r\n        if is_miniature then\r\n            if panel_orientation == \"right way up\" then\r\n                -- This is the \"Inject\" side. Add the script if it's not already there.\r\n                local current_script = dropped_object.getLuaScript()\r\n                \r\n                if current_script == \"\" or not current_script:find(SCRIPT_IDENTIFIER, 0, true) then\r\n                    dropped_object.setLuaScript(SCRIPT_TO_INJECT_TEMPLATE)\r\n                    broadcastToAll(\"Script injected into '\" .. dropped_object.getName() .. \"'!\")\r\n                else\r\n                    broadcastToAll(\"Script already exists on '\" .. dropped_object.getName() .. \"'. No changes made.\")\r\n                end\r\n            elseif panel_orientation == \"upside down\" then\r\n                -- This is the \"Remove\" side. Remove the script if it exists.\r\n                local current_script = dropped_object.getLuaScript()\r\n\r\n                -- Only update the script if it contained the dnd-marker script.\r\n                if current_script:find(SCRIPT_IDENTIFIER, 1, true) then\r\n\t\t\t\t\tdropped_object.script_state = \"\"\r\n\t\t\t\t\tdropped_object.script_code = \"\"\r\n\t\t\t\t\tdropped_object.setLuaScript(\"\")\r\n\t\t\t\t\tdropped_object.reload()\r\n                    broadcastToAll(\"Script removed from '\" .. dropped_object.getName() .. \"'!\")\r\n                else\r\n                    broadcastToAll(\"No script to remove from '\" .. dropped_object.getName() .. \"'.\")\r\n                end\r\n            end\r\n        else\r\n            -- An object that is not a miniature was dropped. Report its type.\r\n            print(\"An object of type '\" .. dropped_object.type .. \"' was dropped on the panel. No action taken.\")\r\n        end\r\n    end\r\nend\r\n",
       "LuaScriptState": "{\"auto_calibrate_enabled\":false,\"debugging_enabled\":false}",
       "XmlUI": "",
       "Rigidbody": {
@@ -1778,10 +1778,10 @@
       "Transform": {
         "posX": -6.97500038,
         "posY": 0.9599999,
-        "posZ": 5.42499971,
-        "rotX": 1.64900086E-06,
-        "rotY": 7.6151764E-06,
-        "rotZ": 5.72563431E-06,
+        "posZ": 5.425,
+        "rotX": 1.68354927E-06,
+        "rotY": -2.40211357E-05,
+        "rotZ": -5.54005737E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -1850,9 +1850,9 @@
         "posX": -6.97500038,
         "posY": 0.9599999,
         "posZ": 3.87499976,
-        "rotX": -1.688346E-06,
-        "rotY": -6.284741E-05,
-        "rotZ": -2.57553256E-06,
+        "rotX": 1.088895E-06,
+        "rotY": -2.94852034E-05,
+        "rotZ": 7.83398434E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -1919,11 +1919,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -10.075,
-        "posY": 0.95991987,
+        "posY": 0.959919751,
         "posZ": 2.32499981,
-        "rotX": -3.92153765E-07,
+        "rotX": -4.83435542E-07,
         "rotY": 45.0010338,
-        "rotZ": 5.93641232E-07,
+        "rotZ": 3.13652919E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -1990,11 +1990,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -13.1749992,
-        "posY": 0.960001,
+        "posY": 0.9599997,
         "posZ": -5.42499971,
-        "rotX": -4.39751348E-05,
+        "rotX": -1.65410665E-06,
         "rotY": 179.995239,
-        "rotZ": -0.000139583557,
+        "rotZ": 1.91560071E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2061,11 +2061,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -10.075,
-        "posY": 0.9599999,
+        "posY": 0.9600001,
         "posZ": 3.875,
-        "rotX": 7.546969E-08,
-        "rotY": 224.999435,
-        "rotZ": -7.39963468E-07,
+        "rotX": 2.864858E-06,
+        "rotY": 224.99942,
+        "rotZ": 2.14714237E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2132,11 +2132,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -10.075,
-        "posY": 0.9599198,
+        "posY": 0.959919751,
         "posZ": 5.42499971,
-        "rotX": -3.749986E-07,
-        "rotY": -0.0007648776,
-        "rotZ": -9.59120356E-08,
+        "rotX": -8.07048366E-07,
+        "rotY": -0.00076481275,
+        "rotZ": 2.98072848E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2205,9 +2205,9 @@
         "posX": -13.1749992,
         "posY": 0.9599999,
         "posZ": 5.42499971,
-        "rotX": -6.082721E-06,
-        "rotY": 4.030078E-05,
-        "rotZ": 4.3948553E-06,
+        "rotX": -1.01700732E-06,
+        "rotY": 4.04162565E-05,
+        "rotZ": -4.14501528E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2274,11 +2274,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -8.525,
-        "posY": 0.9599199,
+        "posY": 0.95992,
         "posZ": 2.32499981,
-        "rotX": -6.92550429E-07,
-        "rotY": -7.06085E-05,
-        "rotZ": 2.44907255E-07,
+        "rotX": -2.14490854E-07,
+        "rotY": -7.06066639E-05,
+        "rotZ": 2.35342554E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2347,9 +2347,9 @@
         "posX": -8.525,
         "posY": 0.95991987,
         "posZ": 3.875,
-        "rotX": 9.99699949E-08,
-        "rotY": -0.000573857047,
-        "rotZ": 9.870098E-08,
+        "rotX": -8.00107955E-07,
+        "rotY": -0.000573797268,
+        "rotZ": 1.162167E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2418,9 +2418,9 @@
         "posX": -8.525,
         "posY": 0.95991987,
         "posZ": 5.42499971,
-        "rotX": -7.384746E-07,
-        "rotY": -0.00349784479,
-        "rotZ": 4.7579536E-07,
+        "rotX": -9.53282267E-07,
+        "rotY": -0.00349778519,
+        "rotZ": 5.56681471E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2489,9 +2489,9 @@
         "posX": -11.625,
         "posY": 0.9599999,
         "posZ": 3.875,
-        "rotX": -1.81426924E-06,
+        "rotX": -1.90765081E-06,
         "rotY": 180.000061,
-        "rotZ": 3.47511445E-07,
+        "rotZ": 3.47514259E-07,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2547,12 +2547,12 @@
       "GUID": "9b3022",
       "Name": "Custom_Model",
       "Transform": {
-        "posX": 0.7042657,
-        "posY": 0.959999859,
+        "posX": 0.7042656,
+        "posY": 0.96,
         "posZ": -10.2127161,
-        "rotX": -6.332382E-06,
-        "rotY": 0.00261690188,
-        "rotZ": -2.182103E-06,
+        "rotX": 3.47433752E-06,
+        "rotY": 0.00262922817,
+        "rotZ": -2.01345847E-06,
         "scaleX": 0.5913926,
         "scaleY": 0.234926164,
         "scaleZ": 0.4331478
@@ -2566,9 +2566,9 @@
         "z": 0.0
       },
       "ColorDiffuse": {
-        "r": 0.381531537,
-        "g": 0.381531537,
-        "b": 0.381531537
+        "r": 0.381531447,
+        "g": 0.381531447,
+        "b": 0.381531447
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -2739,11 +2739,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -13.1749992,
-        "posY": 0.9599998,
+        "posY": 0.95999974,
         "posZ": 3.87500024,
-        "rotX": 1.1443135E-06,
-        "rotY": 224.99939,
-        "rotZ": 1.83887482E-06,
+        "rotX": 1.5203309E-06,
+        "rotY": 224.999374,
+        "rotZ": 1.07051517E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8
@@ -2809,12 +2809,12 @@
       "GUID": "cbee16",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": -2.32499981,
-        "posY": 0.960000336,
-        "posZ": -6.975,
-        "rotX": -2.86713391E-08,
-        "rotY": 180.0,
-        "rotZ": -1.92082328E-09,
+        "posX": -13.1667986,
+        "posY": 0.9600003,
+        "posZ": -10.0748911,
+        "rotX": -1.33446872E-06,
+        "rotY": 180.1371,
+        "rotZ": -4.69054527E-07,
         "scaleX": 0.65,
         "scaleY": 1.0,
         "scaleZ": 0.65
@@ -2858,7 +2858,7 @@
           "Stretch": true
         }
       },
-      "LuaScript": "",
+      "LuaScript": "--[dnd-measurement-injector]--\nfunction onPickUp(color)\n    local gridX = Grid and Grid.sizeX or 2\n    local startPos = self.getPosition()\n\n    for _, hit in ipairs(Physics.cast({\n        origin = self.getBoundsNormalized().center - self.getBoundsNormalized().size,\n        direction = {0, -1, 0},\n        type = 1,\n        max_distance = 10\n    })) do\n        if hit.point and hit.hit_object ~= self then\n            startPos = hit.point\n            break\n        end\n    end\n\t\n\tstartPos[2] = startPos[2] + 0.01\n\n    local spinner = spawnObject({\n        type = \"Custom_Model\",\n        position = startPos,\n        rotation = {0, 0, 0},\n        scale = {gridX / 2.2, 0.1, gridX / 2.2}\n    })\n\n    spinner.setLock(true)\n    spinner.setCustomObject({\n        type = \"coin\",\n        mesh = \"http://pastebin.com/raw/RBUFj0HE\",\n        collider = \"http://pastebin.com/raw/bUwzJeWz\"\n    })\n\tspinner.setColorTint({1, 1, 1})\n    spinner.interactable = false\n    spinner.lock()\n\n    spinner.createButton({\n        click_function = \"noop\",\n        function_owner = self,\n        label = \"0\",\n        position = {0, 0, 0},\n\t\tfont_color = color,\n        width = 0,\n\t\theight = 0,\n        font_size = 400\n    })\n\n\tself.clearButtons()\n    self.createButton({\n        click_function = \"noop\",\n        function_owner = self,\n        label = \"0\",\n        position = {0, self.getVisualBoundsNormalized().size.z + 1, 0},\n\t\tfont_color = {1, 1, 1},\n        width = 0,\n\t\theight = 0,\n        font_size = 400\n    })\n\n    local parentGUID = self.getGUID()\n    spinner.setLuaScript([=[\n        local time_of_release = nil\n        \n        function onUpdate()\n            local parent = getObjectFromGUID(\"]=] .. parentGUID .. [=[\")\n            \n            if parent and parent.held_by_color then\n\t\t\t    if (not time_of_release) then\n\t\t\t\t\tlocal gridX = Grid and Grid.sizeX or 2\n\t\t\t\t\tlocal diff = self.getPosition() - parent.getPosition()\n\t\t\t\t\tdiff.y = 0\n\t\t\t\t\tlocal dist = math.max(math.abs(diff.x), math.abs(diff.z)) * (5.0 / gridX)\n\t\t\t\t\tparent.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\n\t\t\t\t\tself.editButton({index=0, label=tostring(math.floor((dist+2.5)/5.0))})\n\t\t\t\t\tself.setRotation({0, self.getRotation().y + 1, 0})\n                end\n            else\n                -- The object is NOT being held.\n                if time_of_release == nil then\n                    time_of_release = os.clock()\n                end\n\n                -- Check if time has passed since release.\n                if os.clock() - time_of_release >= 5 then\n                    destroyObject(self)\n                end\n            end\n        end\n    ]=])\nend\n\nlocal time_of_release = nil\nfunction onUpdate()\n\tif self.held_by_color then\n\t    time_of_release = nil\n    else\n\t\tif time_of_release == nil then\n\t\t\ttime_of_release = os.clock()\n\t\tend\n\n\t\tif os.clock() - time_of_release >= 5 then\n\t\t\tself.clearButtons()\n\t\tend\n\tend\nend\n\nfunction noop() end\n\n",
       "LuaScriptState": "",
       "XmlUI": "",
       "States": {
@@ -3068,11 +3068,11 @@
       "Name": "Custom_Model",
       "Transform": {
         "posX": -6.975,
-        "posY": 0.960000038,
+        "posY": 0.9599998,
         "posZ": 2.32499981,
-        "rotX": -9.484338E-08,
-        "rotY": 44.9947929,
-        "rotZ": -5.371943E-08,
+        "rotX": -1.22858535E-06,
+        "rotY": 44.9947739,
+        "rotZ": 1.64259029E-06,
         "scaleX": 0.8,
         "scaleY": 0.8,
         "scaleZ": 0.8

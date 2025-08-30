@@ -163,7 +163,7 @@ function onObjectDrop(player_color, dropped_object)
         end
 
         -- Check if the dropped object has a tag that identifies it as a miniature.
-        local valid_tags = {"Miniature", "Figurine", "Figure", "Model"}
+        local valid_tags = {"Miniature", "Figurine", "Figure", "Model", "Tile"}
         local is_miniature = false
         for _, tag in ipairs(valid_tags) do
             if dropped_object.tag == tag then

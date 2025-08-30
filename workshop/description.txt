@@ -21,10 +21,10 @@ Place the [b]Panel[/b] on your table.
 
 Drop a miniature onto the panel:
 
-[/list]
+[list]
 [*] [b]Right-side up[/b] → Adds the distance script.
 [*] [b]Upside down[/b] → Removes the script.
-[list]
+[/list]
 
 Pick up and move your miniature - the distance counter will appear automatically!
 
