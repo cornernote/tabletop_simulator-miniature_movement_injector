@@ -1,8 +1,13 @@
 local AutoUpdater = {
     name = "Miniature Movement Injector",
-    version = "2.0.0",
+    version = "2.0.1",
     versionUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.ver",
     scriptUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.lua",
+
+    run = function(self, host)
+        self.host = host
+        self:checkForUpdate()
+    end,
 
     isNewerVersion = function(self, remoteVersion)
         local function split(v)
@@ -177,8 +182,7 @@ function noop() end
 ]]
 
 function onLoad()
-    AutoUpdater.host = self
-    AutoUpdater:checkForUpdate()
+    AutoUpdater:run(self)
 end
 
 function onObjectDrop(player_color, dropped_object)
