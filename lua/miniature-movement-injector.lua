@@ -1,16 +1,73 @@
--- Miniature Movement Injector by CoRNeRNoTe
--- Injects and removes movement script from miniatures.
+local AutoUpdater = {
+    name = "Miniature Movement Injector",
+    version = "2.0.0",
+    versionUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.ver",
+    scriptUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.lua",
 
--- Most recent script can be found on GitHub:
--- https://github.com/cornernote/tabletop_simulator-mtg_booster_generator/blob/main/lua/booster-generator.lua
-local SCRIPT_IDENTIFIER = "--[dnd-measurement-injector]--"
+    isNewerVersion = function(self, remoteVersion)
+        local function split(v)
+            local t = {}
+            for n in v:gmatch("%d+") do
+                table.insert(t, tonumber(n))
+            end
+            return t
+        end
+
+        local r, l = split(remoteVersion), split(self.version)
+        for i = 1, math.max(#r, #l) do
+            local rv, lv = r[i] or 0, l[i] or 0
+            if rv > lv then
+                return true
+            end
+            if rv < lv then
+                return false
+            end
+        end
+        return false
+    end,
+
+    fetchNewScript = function(self, newVersion)
+        WebRequest.get(self.scriptUrl, function(request)
+            if request.response_code ~= 200 then
+                return
+            end
+            if request.text and #request.text > 0 then
+                self.host.setLuaScript(request.text)
+                print(self.name .. ": Updated to version " .. newVersion)
+                Wait.condition(function()
+                    if self.host then
+                        self.host.reload()
+                    end
+                end, function()
+                    return not self.host or self.host.resting
+                end)
+            end
+        end)
+    end,
+
+    checkForUpdate = function(self)
+        if not self.host then
+            return
+        end
+        WebRequest.get(self.versionUrl, function(request)
+            if request.response_code ~= 200 then
+                print(self.name .. ": Failed to check version (" .. request.response_code .. ")")
+                return
+            end
+            local remoteVersion = request.text:match("[^\r\n]+") or ""
+            if remoteVersion ~= "" and self:isNewerVersion(remoteVersion) then
+                self:fetchNewScript(remoteVersion)
+            end
+        end)
+    end,
+}
 
 local SCRIPT_TO_INJECT_TEMPLATE = [[
-]] .. SCRIPT_IDENTIFIER .. [[
+--[miniature-movement-injector]--
 
 -- Miniature Movement Injector by CoRNeRNoTe
 -- Most recent script can be found on GitHub:
--- https://github.com/cornernote/tabletop_simulator-mtg_booster_generator/blob/main/lua/booster-generator.lua
+-- https://github.com/cornernote/tabletop_simulator-miniature_movement_injector/blob/main/lua/miniature-movement.lua
 
 function onPickUp(color)
     local gridX = Grid and Grid.sizeX or 2
@@ -117,8 +174,12 @@ function onUpdate()
 end
 
 function noop() end
-
 ]]
+
+function onLoad()
+    AutoUpdater.host = self
+    AutoUpdater:checkForUpdate()
+end
 
 function onObjectDrop(player_color, dropped_object)
     if self.getGUID() == dropped_object.getGUID() then
@@ -166,7 +227,7 @@ function onObjectDrop(player_color, dropped_object)
             if panel_orientation == "right way up" then
                 local current_script = dropped_object.getLuaScript()
 
-                if current_script == "" or not current_script:find(SCRIPT_IDENTIFIER, 0, true) then
+                if current_script == "" or not current_script:find("--[miniature-movement-injector]--", 0, true) then
                     dropped_object.setLuaScript(SCRIPT_TO_INJECT_TEMPLATE)
                     broadcastToAll("Script injected into '" .. dropped_object.getName() .. "'!")
                 else
@@ -175,7 +236,7 @@ function onObjectDrop(player_color, dropped_object)
             elseif panel_orientation == "upside down" then
                 local current_script = dropped_object.getLuaScript()
 
-                if current_script:find(SCRIPT_IDENTIFIER, 1, true) then
+                if current_script:find("--[miniature-movement-injector]--", 1, true) then
                     dropped_object.script_state = ""
                     dropped_object.script_code = ""
                     dropped_object.setLuaScript("")
