@@ -1,69 +1,69 @@
 local AutoUpdater = {
     name = "Miniature Movement Injector",
-    version = "2.0.1",
+    version = "2.0.2",
     versionUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.ver",
     scriptUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.lua",
+    debug = false,
 
     run = function(self, host)
         self.host = host
+        if not self.host then
+            self:error("Error: host not set, ensure AutoUpdater:run(self) is in your onLoad() function")
+            return
+        end
         self:checkForUpdate()
     end,
-
+    checkForUpdate = function(self)
+        WebRequest.get(self.versionUrl, function(request)
+            if request.response_code ~= 200 then
+                self:error("Failed to check version (" .. request.response_code .. ": " .. request.error .. ")")
+                return
+            end
+            local remoteVersion = request.text:match("[^\r\n]+") or ""
+            if self:isNewerVersion(remoteVersion) then
+                self:fetchNewScript(remoteVersion)
+            end
+        end)
+    end,
     isNewerVersion = function(self, remoteVersion)
         local function split(v)
-            local t = {}
-            for n in v:gmatch("%d+") do
-                table.insert(t, tonumber(n))
-            end
-            return t
+            return { v:match("^(%d+)%.?(%d*)%.?(%d*)") or 0 }
         end
-
         local r, l = split(remoteVersion), split(self.version)
         for i = 1, math.max(#r, #l) do
-            local rv, lv = r[i] or 0, l[i] or 0
-            if rv > lv then
-                return true
-            end
-            if rv < lv then
-                return false
+            local rv, lv = tonumber(r[i]) or 0, tonumber(l[i]) or 0
+            if rv ~= lv then
+                return rv > lv
             end
         end
         return false
     end,
-
     fetchNewScript = function(self, newVersion)
         WebRequest.get(self.scriptUrl, function(request)
             if request.response_code ~= 200 then
+                self:error("Failed to fetch new script (" .. request.response_code .. ": " .. request.error .. ")")
                 return
             end
             if request.text and #request.text > 0 then
                 self.host.setLuaScript(request.text)
-                print(self.name .. ": Updated to version " .. newVersion)
+                self:print("Updated to version " .. newVersion)
                 Wait.condition(function()
-                    if self.host then
-                        self.host.reload()
-                    end
+                    return not self.host or self.host.reload()
                 end, function()
                     return not self.host or self.host.resting
                 end)
+            else
+                self:error("New script is empty")
             end
         end)
     end,
-
-    checkForUpdate = function(self)
-        if not self.host then
-            return
+    print = function(self, message)
+        print(self.name .. ": " .. message)
+    end,
+    error = function(self, message)
+        if self.debug then
+            error(self.name .. ": " .. message)
         end
-        WebRequest.get(self.versionUrl, function(request)
-            if request.response_code ~= 200 then
-                print(self.name .. ": Failed to check version (" .. request.response_code .. ")")
-                return
-            end
-            local remoteVersion = request.text:match("[^\r\n]+") or ""
-            if remoteVersion ~= "" and self:isNewerVersion(remoteVersion) then
-                self:fetchNewScript(remoteVersion)
-            end
-        end)
     end,
 }
 
