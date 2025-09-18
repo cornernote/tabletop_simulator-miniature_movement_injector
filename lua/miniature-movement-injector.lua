@@ -1,6 +1,6 @@
 local AutoUpdater = {
     name = "Miniature Movement Injector",
-    version = "2.1.0",
+    version = "2.1.1",
     versionUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.ver",
     scriptUrl = "https://raw.githubusercontent.com/cornernote/tabletop_simulator-miniature_movement_injector/refs/heads/main/lua/miniature-movement-injector.lua",
     debug = false,
@@ -12,7 +12,6 @@ local AutoUpdater = {
             return
         end
         self:checkForUpdate()
-        self:updateAssets()
     end,
     checkForUpdate = function(self)
         WebRequest.get(self.versionUrl, function(request)
@@ -48,7 +47,11 @@ local AutoUpdater = {
             if request.text and #request.text > 0 then
                 self.host.setLuaScript(request.text)
                 self:print("Updated to version " .. newVersion)
-                self:reload()
+                Wait.condition(function()
+                    return not self.host or self.host.reload()
+                end, function()
+                    return not self.host or self.host.resting
+                end)
             else
                 self:error("New script is empty")
             end
@@ -62,35 +65,6 @@ local AutoUpdater = {
             error(self.name .. ": " .. message)
         end
     end,
-    reload = function(self)
-        Wait.condition(function()
-            return not self.host or self.host.reload()
-        end, function()
-            return not self.host or self.host.resting
-        end)
-    end,
-    updateAssets = function(self)
-        local correctTop = "https://steamusercontent-a.akamaihd.net/ugc/16348925285980654885/BF24BD143E9939702D8AB855D231B2A3A30520B1/"
-        local correctBottom = "https://steamusercontent-a.akamaihd.net/ugc/14530667653373661105/0A203F20E29B006A85C3763B05F16D3DBC1EF8B7/"
-
-        local data = self.host.getCustomObject()
-        local needsAssetUpdate = false
-
-        if not data.image or data.image ~= correctTop then
-            data.image = correctTop
-            needsAssetUpdate = true
-        end
-        if not data.image_secondary or data.image_secondary ~= correctBottom then
-            data.image_secondary = correctBottom
-            needsAssetUpdate = true
-        end
-
-        if needsAssetUpdate then
-            self:print("Updated assets")
-            self.host.setCustomObject(data)
-            self:reload()
-        end
-    end
 }
 
 local SCRIPT_TO_INJECT_TEMPLATE = [[
