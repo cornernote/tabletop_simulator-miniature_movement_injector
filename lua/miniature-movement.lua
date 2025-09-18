@@ -1,19 +1,9 @@
+-- Miniature Movement by CoRNeRNoTe
+-- https://github.com/cornernote/tabletop_simulator-miniature_movement_injector/blob/main/lua/miniature-movement.lua
+
 function onPickUp(color)
     local gridX = Grid and Grid.sizeX or 2
     local startPos = self.getPosition()
-
-    for _, hit in ipairs(Physics.cast({
-        origin = self.getBoundsNormalized().center - self.getBoundsNormalized().size,
-        direction = { 0, -1, 0 },
-        type = 1,
-        max_distance = 10
-    })) do
-        if hit.point and hit.hit_object ~= self then
-            startPos = hit.point
-            break
-        end
-    end
-
     startPos[2] = startPos[2] + 0.01
 
     local spinner = spawnObject({
